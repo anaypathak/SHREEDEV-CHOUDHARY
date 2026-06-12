@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shreedev Choudhary — Finance · Analysis · Strategy</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        ink: '#1E1B4B',
+        indigoDeep: '#312E81',
+        indigoMain: '#4F46E5',
+        indigoSoft: '#EEF2FF',
+        indigoMist: '#C7D2FE',
+      },
+      fontFamily: {
+        display: ['Sora', 'sans-serif'],
+        body: ['Inter', 'sans-serif'],
+        mono: ['IBM Plex Mono', 'monospace'],
+      }
+    }
+  }
+}
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; background: #fff; color: #1E1B4B; overflow-x: hidden; }
+  ::selection { background: #4F46E5; color: #fff; }
+
+  /* ---------- scrollbar ---------- */
+  ::-webkit-scrollbar { width: 10px; }
+  ::-webkit-scrollbar-track { background: #EEF2FF; }
+  ::-webkit-scrollbar-thumb { background: #4F46E5; border-radius: 8px; }
+
+  /* ---------- hero load sequence ---------- */
+  @keyframes riseIn { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes lineGrow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  .hero-seq > * { opacity: 0; animation: riseIn .9s cubic-bezier(.22,1,.36,1) forwards; }
+  .hero-seq > *:nth-child(1) { animation-delay: .15s; }
+  .hero-seq > *:nth-child(2) { animation-delay: .30s; }
+  .hero-seq > *:nth-child(3) { animation-delay: .45s; }
+  .hero-seq > *:nth-child(4) { animation-delay: .60s; }
+  .hero-seq > *:nth-child(5) { animation-delay: .80s; }
+
+  /* ---------- floating chess grid ---------- */
+  .chess-grid {
+    background-image:
+      linear-gradient(rgba(79,70,229,.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(79,70,229,.08) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, black 30%, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, black 30%, transparent 75%);
+  }
+  @keyframes drift { 0% { background-position: 0 0, 0 0; } 100% { background-position: 64px 64px, 64px 64px; } }
+  .chess-grid { animation: drift 18s linear infinite; }
+
+  @keyframes floatY { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-16px); } }
+  .float-slow { animation: floatY 7s ease-in-out infinite; }
+  .float-slower { animation: floatY 10s ease-in-out infinite; animation-delay: 1.5s; }
+
+  /* ---------- scroll reveal ---------- */
+  .reveal { opacity: 0; transform: translateY(48px); transition: opacity .9s cubic-bezier(.22,1,.36,1), transform .9s cubic-bezier(.22,1,.36,1); }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+  .reveal-left { opacity: 0; transform: translateX(-48px); transition: all .9s cubic-bezier(.22,1,.36,1); }
+  .reveal-left.in { opacity: 1; transform: translateX(0); }
+  .reveal-right { opacity: 0; transform: translateX(48px); transition: all .9s cubic-bezier(.22,1,.36,1); }
+  .reveal-right.in { opacity: 1; transform: translateX(0); }
+  .reveal-scale { opacity: 0; transform: scale(.92); transition: all .8s cubic-bezier(.22,1,.36,1); }
+  .reveal-scale.in { opacity: 1; transform: scale(1); }
+  .stagger > * { transition-delay: 0s; }
+  .stagger.in > *:nth-child(1) { transition-delay: .05s; }
+  .stagger.in > *:nth-child(2) { transition-delay: .15s; }
+  .stagger.in > *:nth-child(3) { transition-delay: .25s; }
+  .stagger.in > *:nth-child(4) { transition-delay: .35s; }
+  .stagger.in > *:nth-child(5) { transition-delay: .45s; }
+
+  /* ---------- nav ---------- */
+  .nav-scrolled { background: rgba(255,255,255,.85); backdrop-filter: blur(16px); box-shadow: 0 1px 0 rgba(79,70,229,.12); }
+  .nav-link { position: relative; }
+  .nav-link::after { content:''; position:absolute; left:0; bottom:-4px; width:100%; height:2px; background:#4F46E5; transform: scaleX(0); transform-origin:left; transition: transform .35s cubic-bezier(.22,1,.36,1); }
+  .nav-link:hover::after { transform: scaleX(1); }
+
+  /* ---------- buttons ---------- */
+  .btn-primary { position: relative; overflow: hidden; transition: transform .3s, box-shadow .3s; }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 32px -8px rgba(79,70,229,.5); }
+  .btn-primary::before { content:''; position:absolute; inset:0; background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,.35) 50%, transparent 70%); transform: translateX(-100%); transition: transform .6s; }
+  .btn-primary:hover::before { transform: translateX(100%); }
+  .btn-ghost { transition: all .3s; }
+  .btn-ghost:hover { background: #1E1B4B; color: #fff; transform: translateY(-2px); }
+
+  /* ---------- cards ---------- */
+  .cert-card { transition: transform .45s cubic-bezier(.22,1,.36,1), box-shadow .45s, border-color .45s; }
+  .cert-card:hover { transform: translateY(-10px); box-shadow: 0 24px 48px -16px rgba(30,27,75,.18); border-color: #4F46E5; }
+  .cert-card:hover .cert-icon { background: #4F46E5; color: #fff; transform: rotate(-6deg) scale(1.08); }
+  .cert-icon { transition: all .4s cubic-bezier(.22,1,.36,1); }
+
+  /* ---------- skill bars ---------- */
+  .skill-bar { transform: scaleX(0); transform-origin: left; transition: transform 1.4s cubic-bezier(.22,1,.36,1) .2s; }
+  .in .skill-bar { transform: scaleX(1); }
+
+  /* ---------- marquee ---------- */
+  @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  .marquee-track { animation: marquee 26s linear infinite; }
+  .marquee-track:hover { animation-play-state: paused; }
+
+  /* ---------- timeline ---------- */
+  .tl-line { transform: scaleY(0); transform-origin: top; transition: transform 1.6s cubic-bezier(.22,1,.36,1); }
+  .in .tl-line { transform: scaleY(1); }
+  .tl-dot { transition: all .4s; }
+  .tl-item:hover .tl-dot { transform: scale(1.4); box-shadow: 0 0 0 8px rgba(79,70,229,.15); }
+
+  /* ---------- chess board signature ---------- */
+  .board-sq { transition: background .5s, transform .5s; }
+  .board-sq:hover { background: #4F46E5 !important; transform: scale(.9); }
+  @keyframes knightPulse { 0%,100% { transform: translateY(0) scale(1); filter: drop-shadow(0 8px 24px rgba(79,70,229,.45)); } 50% { transform: translateY(-10px) scale(1.04); filter: drop-shadow(0 20px 32px rgba(79,70,229,.6)); } }
+  .knight { animation: knightPulse 4s ease-in-out infinite; }
+
+  /* ---------- counters ---------- */
+  .counter { font-variant-numeric: tabular-nums; }
+
+  /* ---------- scroll cue ---------- */
+  @keyframes cue { 0% { transform: translateY(0); opacity: 1; } 70% { transform: translateY(10px); opacity: 0; } 100% { transform: translateY(0); opacity: 0; } }
+  .scroll-cue-dot { animation: cue 1.8s ease-in-out infinite; }
+
+  /* ---------- gradient text ---------- */
+  .grad-text { background: linear-gradient(100deg, #4F46E5 10%, #818CF8 50%, #1E1B4B 90%); -webkit-background-clip: text; background-clip: text; color: transparent; background-size: 200% auto; animation: gradShift 6s ease infinite; }
+  @keyframes gradShift { 0%,100% { background-position: 0% center; } 50% { background-position: 100% center; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .001s !important; transition-duration: .001s !important; animation-iteration-count: 1 !important; }
+  }
+</style>
+</head>
+<body class="font-body antialiased">
+
+<!-- ===================== NAV ===================== -->
+<nav id="nav" class="fixed top-0 left-0 right-0 z-50 transition-all duration-500">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10 h-20 flex items-center justify-between">
+    <a href="#top" class="font-display font-800 text-xl tracking-tight font-bold">SC<span class="text-indigoMain">.</span></a>
+    <div class="hidden md:flex items-center gap-10 text-sm font-medium">
+      <a href="#about" class="nav-link">About</a>
+      <a href="#education" class="nav-link">Education</a>
+      <a href="#certifications" class="nav-link">Certifications</a>
+      <a href="#skills" class="nav-link">Skills</a>
+      <a href="#chess" class="nav-link">Chess</a>
+    </div>
+    <a href="#contact" class="btn-primary bg-indigoMain text-white text-sm font-semibold px-6 py-2.5 rounded-full">Get in touch</a>
+  </div>
+</nav>
+
+<!-- ===================== HERO ===================== -->
+<header id="top" class="relative min-h-screen flex flex-col justify-center items-center text-center px-6 overflow-hidden">
+  <div class="absolute inset-0 chess-grid"></div>
+  <div class="absolute top-24 left-[8%] w-72 h-72 bg-indigoMist/40 rounded-full blur-3xl float-slow"></div>
+  <div class="absolute bottom-20 right-[6%] w-96 h-96 bg-indigoMain/10 rounded-full blur-3xl float-slower"></div>
+
+  <div class="hero-seq relative z-10 max-w-4xl">
+    <p class="font-mono text-xs md:text-sm tracking-[0.35em] uppercase text-indigoMain mb-6">Ranchi, Jharkhand · India</p>
+    <h1 class="font-display font-extrabold text-5xl md:text-7xl lg:text-8xl leading-[1.02] tracking-tight">
+      Shreedev<br><span class="grad-text">Choudhary</span>
+    </h1>
+    <p class="mt-8 text-lg md:text-xl text-indigoDeep/70 max-w-2xl mx-auto leading-relaxed">
+      Commerce student &amp; CA Foundation candidate. I think in ledgers, data, and chess moves — and I'm looking for a research assistantship where that pays off.
+    </p>
+    <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
+      <a href="#contact" class="btn-primary bg-indigoMain text-white font-semibold px-10 py-4 rounded-full">Work with me</a>
+      <a href="#about" class="btn-ghost border-2 border-ink/15 font-semibold px-10 py-4 rounded-full">Explore profile</a>
+    </div>
+    <div class="mt-20 flex justify-center">
+      <div class="w-6 h-10 rounded-full border-2 border-indigoMain/40 flex justify-center pt-2">
+        <div class="scroll-cue-dot w-1.5 h-1.5 rounded-full bg-indigoMain"></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ===================== MARQUEE ===================== -->
+<div class="bg-ink py-5 overflow-hidden">
+  <div class="marquee-track flex whitespace-nowrap gap-12 w-max font-mono text-sm tracking-widest uppercase text-indigoMist/80">
+    <span>Financial Accounting</span><span class="text-indigoMain">◆</span>
+    <span>Data Analysis</span><span class="text-indigoMain">◆</span>
+    <span>CA Foundation 2026</span><span class="text-indigoMain">◆</span>
+    <span>SEBI · NISM Certified</span><span class="text-indigoMain">◆</span>
+    <span>AI Research Tools</span><span class="text-indigoMain">◆</span>
+    <span>Competitive Chess</span><span class="text-indigoMain">◆</span>
+    <span>Strategic Planning</span><span class="text-indigoMain">◆</span>
+    <!-- duplicate for seamless loop -->
+    <span>Financial Accounting</span><span class="text-indigoMain">◆</span>
+    <span>Data Analysis</span><span class="text-indigoMain">◆</span>
+    <span>CA Foundation 2026</span><span class="text-indigoMain">◆</span>
+    <span>SEBI · NISM Certified</span><span class="text-indigoMain">◆</span>
+    <span>AI Research Tools</span><span class="text-indigoMain">◆</span>
+    <span>Competitive Chess</span><span class="text-indigoMain">◆</span>
+    <span>Strategic Planning</span><span class="text-indigoMain">◆</span>
+  </div>
+</div>
+
+<!-- ===================== ABOUT ===================== -->
+<section id="about" class="py-28 lg:py-36 px-6">
+  <div class="max-w-6xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
+    <div class="reveal-left">
+      <p class="font-mono text-xs tracking-[0.3em] uppercase text-indigoMain mb-4">01 — Profile</p>
+      <h2 class="font-display font-bold text-4xl md:text-5xl leading-tight">Analytical by training.<br><span class="text-indigoMain">Strategic by habit.</span></h2>
+      <p class="mt-8 text-indigoDeep/70 text-lg leading-relaxed">
+        I'm a commerce student preparing for the CA Foundation, with a working command of financial principles, quantitative data management, and strategic analysis.
+      </p>
+      <p class="mt-5 text-indigoDeep/70 text-lg leading-relaxed">
+        Certified in AI tools for data processing, trained in markets by SEBI/NISM — and shaped by a competitive chess background that makes pattern recognition and disciplined decision-making second nature. I work independently, remotely, and reliably on rigorous academic or business projects.
+      </p>
+    </div>
+    <div class="reveal-right">
+      <div class="grid grid-cols-2 gap-5">
+        <div class="bg-indigoSoft rounded-3xl p-8 text-center reveal-scale">
+          <div class="counter font-display font-extrabold text-5xl text-indigoMain" data-target="4">0</div>
+          <p class="mt-2 text-sm font-medium text-indigoDeep/60">Certifications earned</p>
+        </div>
+        <div class="bg-ink rounded-3xl p-8 text-center text-white reveal-scale">
+          <div class="counter font-display font-extrabold text-5xl" data-target="2026">0</div>
+          <p class="mt-2 text-sm font-medium text-indigoMist/70">CA Foundation target</p>
+        </div>
+        <div class="bg-ink rounded-3xl p-8 text-center text-white reveal-scale">
+          <div class="font-display font-extrabold text-5xl">♞</div>
+          <p class="mt-2 text-sm font-medium text-indigoMist/70">Active chess player</p>
+        </div>
+        <div class="bg-indigoSoft rounded-3xl p-8 text-center reveal-scale">
+          <div class="counter font-display font-extrabold text-5xl text-indigoMain" data-target="100">0</div>
+          <p class="mt-2 text-sm font-medium text-indigoDeep/60">% remote-ready</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== EDUCATION ===================== -->
+<section id="education" class="py-28 lg:py-36 px-6 bg-indigoSoft/60">
+  <div class="max-w-5xl mx-auto">
+    <div class="reveal text-center mb-20">
+      <p class="font-mono text-xs tracking-[0.3em] uppercase text-indigoMain mb-4">02 — Education</p>
+      <h2 class="font-display font-bold text-4xl md:text-5xl">The foundation</h2>
+    </div>
+
+    <div class="reveal relative pl-10 md:pl-0">
+      <div class="tl-line absolute left-2 md:left-1/2 top-0 bottom-0 w-0.5 bg-indigoMain/30"></div>
+
+      <div class="tl-item relative md:grid md:grid-cols-2 md:gap-16 mb-16">
+        <div class="tl-dot absolute -left-10 md:left-1/2 md:-translate-x-1/2 top-1 w-5 h-5 rounded-full bg-indigoMain border-4 border-white"></div>
+        <div class="md:text-right md:pr-4">
+          <p class="font-mono text-sm text-indigoMain">2026 · In progress</p>
+          <h3 class="font-display font-bold text-2xl mt-2">CA Foundation Candidate</h3>
+          <p class="text-indigoDeep/60 mt-2">Institute of Chartered Accountants of India (ICAI)</p>
+        </div>
+        <div class="mt-3 md:mt-0 md:pl-4 text-indigoDeep/70 leading-relaxed">
+          Building rigorous grounding in accounting, business law, quantitative aptitude, and business economics on the path to chartered accountancy.
+        </div>
+      </div>
+
+      <div class="tl-item relative md:grid md:grid-cols-2 md:gap-16">
+        <div class="tl-dot absolute -left-10 md:left-1/2 md:-translate-x-1/2 top-1 w-5 h-5 rounded-full bg-ink border-4 border-white"></div>
+        <div class="md:text-right md:pr-4">
+          <p class="font-mono text-sm text-indigoMain">2025</p>
+          <h3 class="font-display font-bold text-2xl mt-2">Senior Secondary — Commerce</h3>
+          <p class="text-indigoDeep/60 mt-2">Don Bosco School Kakar (ICSE)</p>
+        </div>
+        <div class="mt-3 md:mt-0 md:pl-4 text-indigoDeep/70 leading-relaxed">
+          Class XII with a commerce specialization — accounts, economics, and business studies as the core toolkit.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CERTIFICATIONS ===================== -->
+<section id="certifications" class="py-28 lg:py-36 px-6">
+  <div class="max-w-6xl mx-auto">
+    <div class="reveal text-center mb-20">
+      <p class="font-mono text-xs tracking-[0.3em] uppercase text-indigoMain mb-4">03 — Certifications</p>
+      <h2 class="font-display font-bold text-4xl md:text-5xl">Proof of work</h2>
+    </div>
+
+    <div class="reveal stagger grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="cert-card reveal bg-white border-2 border-indigoSoft rounded-3xl p-8">
+        <div class="cert-icon w-14 h-14 rounded-2xl bg-indigoSoft text-indigoMain flex items-center justify-center text-2xl font-display font-bold">₹</div>
+        <h3 class="font-display font-bold text-xl mt-6">SEBI Investor Awareness</h3>
+        <p class="font-mono text-xs text-indigoMain mt-2 tracking-wider">NISM · MARCH 2026</p>
+        <p class="text-indigoDeep/60 mt-4 text-sm leading-relaxed">Passed the National Institute of Securities Markets examination on investor awareness.</p>
+      </div>
+
+      <div class="cert-card reveal bg-white border-2 border-indigoSoft rounded-3xl p-8">
+        <div class="cert-icon w-14 h-14 rounded-2xl bg-indigoSoft text-indigoMain flex items-center justify-center text-2xl font-display font-bold">AI</div>
+        <h3 class="font-display font-bold text-xl mt-6">AI Tools &amp; Data Analysis</h3>
+        <p class="font-mono text-xs text-indigoMain mt-2 tracking-wider">BE10X · JUNE 2026</p>
+        <p class="text-indigoDeep/60 mt-4 text-sm leading-relaxed">Workshop certification in analysing data, building presentations, and optimising workflows with AI.</p>
+      </div>
+
+      <div class="cert-card reveal bg-white border-2 border-indigoSoft rounded-3xl p-8">
+        <div class="cert-icon w-14 h-14 rounded-2xl bg-indigoSoft text-indigoMain flex items-center justify-center text-2xl font-display font-bold">◎</div>
+        <h3 class="font-display font-bold text-xl mt-6">Digital Marketing</h3>
+        <p class="font-mono text-xs text-indigoMain mt-2 tracking-wider">HUBSPOT ACADEMY · JUNE 2026</p>
+        <p class="text-indigoDeep/60 mt-4 text-sm leading-relaxed">Foundational training in modern digital marketing strategy and channels.</p>
+      </div>
+
+      <div class="cert-card reveal bg-white border-2 border-indigoSoft rounded-3xl p-8">
+        <div class="cert-icon w-14 h-14 rounded-2xl bg-indigoSoft text-indigoMain flex items-center justify-center text-2xl font-display font-bold">⚙</div>
+        <h3 class="font-display font-bold text-xl mt-6">AI Awareness Training</h3>
+        <p class="font-mono text-xs text-indigoMain mt-2 tracking-wider">HP · COMPLETED</p>
+        <p class="text-indigoDeep/60 mt-4 text-sm leading-relaxed">Completed the HP AI Awareness program covering practical, responsible AI fundamentals.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SKILLS ===================== -->
+<section id="skills" class="py-28 lg:py-36 px-6 bg-ink text-white relative overflow-hidden">
+  <div class="absolute -top-32 -right-32 w-96 h-96 bg-indigoMain/20 rounded-full blur-3xl"></div>
+  <div class="absolute -bottom-32 -left-32 w-96 h-96 bg-indigoMain/15 rounded-full blur-3xl"></div>
+  <div class="max-w-6xl mx-auto relative">
+    <div class="reveal text-center mb-20">
+      <p class="font-mono text-xs tracking-[0.3em] uppercase text-indigoMist mb-4">04 — Skills</p>
+      <h2 class="font-display font-bold text-4xl md:text-5xl">The toolkit</h2>
+    </div>
+
+    <div class="grid lg:grid-cols-3 gap-12">
+      <div class="reveal">
+        <h3 class="font-display font-bold text-xl text-indigoMist mb-8">Research &amp; Analytics</h3>
+        <div class="space-y-7">
+          <div>
+            <div class="flex justify-between text-sm mb-2"><span>Financial Accounting</span><span class="font-mono text-indigoMist/70">core</span></div>
+            <div class="h-1.5 bg-white/10 rounded-full overflow-hidden"><div class="skill-bar h-full w-[92%] bg-gradient-to-r from-indigoMain to-indigoMist rounded-full"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-2"><span>Data Analysis</span><span class="font-mono text-indigoMist/70">core</span></div>
+            <div class="h-1.5 bg-white/10 rounded-full overflow-hidden"><div class="skill-bar h-full w-[88%] bg-gradient-to-r from-indigoMain to-indigoMist rounded-full"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-2"><span>AI Research Tools</span><span class="font-mono text-indigoMist/70">certified</span></div>
+            <div class="h-1.5 bg-white/10 rounded-full overflow-hidden"><div class="skill-bar h-full w-[84%] bg-gradient-to-r from-indigoMain to-indigoMist rounded-full"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-2"><span>Business Case Analysis</span><span class="font-mono text-indigoMist/70">practiced</span></div>
+            <div class="h-1.5 bg-white/10 rounded-full overflow-hidden"><div class="skill-bar h-full w-[86%] bg-gradient-to-r from-indigoMain to-indigoMist rounded-full"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="reveal" style="transition-delay:.15s">
+        <h3 class="font-display font-bold text-xl text-indigoMist mb-8">Technical</h3>
+        <div class="space-y-7">
+          <div>
+            <div class="flex justify-between text-sm mb-2"><span>MS Excel</span><span class="font-mono text-indigoMist/70">daily</span></div>
+            <div class="h-1.5 bg-white/10 rounded-full overflow-hidden"><div class="skill-bar h-full w-[90%] bg-gradient-to-r from-indigoMain to-indigoMist rounded-full"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-2"><span>Word &amp; PowerPoint</span><span class="font-mono text-indigoMist/70">daily</span></div>
+            <div class="h-1.5 bg-white/10 rounded-full overflow-hidden"><div class="skill-bar h-full w-[88%] bg-gradient-to-r from-indigoMain to-indigoMist rounded-full"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-2"><span>CRM Tools</span><span class="font-mono text-indigoMist/70">working</span></div>
+            <div class="h-1.5 bg-white/10 rounded-full overflow-hidden"><div class="skill-bar h-full w-[75%] bg-gradient-to-r from-indigoMain to-indigoMist rounded-full"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="reveal" style="transition-delay:.3s">
+        <h3 class="font-display font-bold text-xl text-indigoMist mb-8">Soft skills</h3>
+        <div class="flex flex-wrap gap-3">
+          <span class="px-5 py-2.5 rounded-full border border-white/20 text-sm hover:bg-indigoMain hover:border-indigoMain transition-all duration-300 cursor-default">Critical Thinking</span>
+          <span class="px-5 py-2.5 rounded-full border border-white/20 text-sm hover:bg-indigoMain hover:border-indigoMain transition-all duration-300 cursor-default">Strategic Planning</span>
+          <span class="px-5 py-2.5 rounded-full border border-white/20 text-sm hover:bg-indigoMain hover:border-indigoMain transition-all duration-300 cursor-default">Attention to Detail</span>
+          <span class="px-5 py-2.5 rounded-full border border-white/20 text-sm hover:bg-indigoMain hover:border-indigoMain transition-all duration-300 cursor-default">Remote Independence</span>
+          <span class="px-5 py-2.5 rounded-full border border-white/20 text-sm hover:bg-indigoMain hover:border-indigoMain transition-all duration-300 cursor-default">Pattern Recognition</span>
+          <span class="px-5 py-2.5 rounded-full border border-white/20 text-sm hover:bg-indigoMain hover:border-indigoMain transition-all duration-300 cursor-default">Reliability</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CHESS SIGNATURE ===================== -->
+<section id="chess" class="py-28 lg:py-36 px-6">
+  <div class="max-w-6xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
+    <div class="reveal-left order-2 lg:order-1 flex justify-center">
+      <div class="relative">
+        <div id="board" class="grid grid-cols-6 rounded-3xl overflow-hidden shadow-2xl shadow-indigoMain/20 border-4 border-ink"></div>
+        <div class="knight absolute -top-10 -right-8 text-7xl md:text-8xl text-indigoMain select-none">♞</div>
+      </div>
+    </div>
+    <div class="reveal-right order-1 lg:order-2">
+      <p class="font-mono text-xs tracking-[0.3em] uppercase text-indigoMain mb-4">05 — Beyond the books</p>
+      <h2 class="font-display font-bold text-4xl md:text-5xl leading-tight">Every analysis is a <span class="text-indigoMain">chess position.</span></h2>
+      <p class="mt-8 text-indigoDeep/70 text-lg leading-relaxed">
+        I'm an active competitive chess player. The board taught me to read positions, weigh trade-offs, and make sound decisions under tight constraints — exactly the habits that structured research and case analysis demand.
+      </p>
+      <p class="mt-5 text-indigoDeep/70 text-lg leading-relaxed">
+        I regularly evaluate corporate financial and operational case studies to identify root causes and structural solutions. Same game, different board.
+      </p>
+      <p class="mt-8 font-mono text-sm text-indigoMain/80">// hover the board — every square responds</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CONTACT ===================== -->
+<section id="contact" class="py-28 lg:py-36 px-6 bg-indigoSoft/60 relative overflow-hidden">
+  <div class="absolute inset-0 chess-grid opacity-50"></div>
+  <div class="reveal max-w-3xl mx-auto text-center relative">
+    <p class="font-mono text-xs tracking-[0.3em] uppercase text-indigoMain mb-4">06 — Next move</p>
+    <h2 class="font-display font-extrabold text-4xl md:text-6xl leading-tight">Let's make the<br><span class="grad-text">opening move.</span></h2>
+    <p class="mt-8 text-indigoDeep/70 text-lg max-w-xl mx-auto">
+      Open to research assistantships and academic internships — remote-friendly, deadline-reliable, detail-obsessed.
+    </p>
+    <div class="mt-12 flex flex-col sm:flex-row gap-4 justify-center">
+      <a href="mailto:s.devchoudhary1313@gmail.com" class="btn-primary bg-indigoMain text-white font-semibold px-10 py-4 rounded-full">s.devchoudhary1313@gmail.com</a>
+      <a href="tel:+917667882207" class="btn-ghost border-2 border-ink/15 bg-white font-semibold px-10 py-4 rounded-full">+91 76678 82207</a>
+    </div>
+    <a href="https://linkedin.com/in/shreedev-choudhary-1407b9412" target="_blank" rel="noopener" class="inline-flex items-center gap-2 mt-10 text-indigoMain font-semibold hover:gap-4 transition-all duration-300">
+      LinkedIn profile <span>→</span>
+    </a>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="bg-ink text-indigoMist/60 py-10 px-6">
+  <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-sm">
+    <p class="font-display font-bold text-white text-lg">SC<span class="text-indigoMain">.</span></p>
+    <p>© 2026 Shreedev Choudhary · Ranchi, Jharkhand</p>
+    <p class="font-mono text-xs tracking-wider">DESIGNED TO BE READ LIKE A LEDGER</p>
+  </div>
+</footer>
+
+<script>
+// ---------- nav background on scroll ----------
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('nav-scrolled', window.scrollY > 40);
+}, { passive: true });
+
+// ---------- scroll reveal ----------
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+}, { threshold: 0.15 });
+document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(el => io.observe(el));
+
+// ---------- counters ----------
+const counterIO = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const el = e.target;
+    const target = +el.dataset.target;
+    const dur = 1600, start = performance.now();
+    function tick(now) {
+      const p = Math.min((now - start) / dur, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(target * eased);
+      if (p < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+    counterIO.unobserve(el);
+  });
+}, { threshold: 0.5 });
+document.querySelectorAll('.counter').forEach(el => counterIO.observe(el));
+
+// ---------- build chess board ----------
+const board = document.getElementById('board');
+const size = window.innerWidth < 640 ? 44 : 60;
+for (let r = 0; r < 6; r++) {
+  for (let c = 0; c < 6; c++) {
+    const sq = document.createElement('div');
+    sq.className = 'board-sq';
+    sq.style.width = size + 'px';
+    sq.style.height = size + 'px';
+    sq.style.background = (r + c) % 2 === 0 ? '#EEF2FF' : '#312E81';
+    board.appendChild(sq);
+  }
+}
+
+// ---------- ambient board ripple ----------
+const squares = [...document.querySelectorAll('.board-sq')];
+setInterval(() => {
+  const sq = squares[Math.floor(Math.random() * squares.length)];
+  const orig = sq.style.background;
+  sq.style.background = '#4F46E5';
+  setTimeout(() => sq.style.background = orig, 700);
+}, 900);
+</script>
+</body>
+</html>
